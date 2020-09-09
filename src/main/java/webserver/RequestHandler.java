@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,23 +29,36 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(in, StandardCharsets.UTF_8));
-            while (true) {
-                String line = bufferedReader.readLine();
-                if (line.equals("")) {
-                    break;
-                }
-                logger.debug("request : {}", line);
-            }
-
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            Queue<String> requests = acceptRequestOf(in);
+            exportResponseTo(out, requests);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private Queue<String> acceptRequestOf(InputStream in) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        Queue<String> requests = new LinkedList<>();
+
+        while (true) {
+            String line = bufferedReader.readLine();
+            if (line.equals("")) {
+                break;
+            }
+            requests.add(line);
+        }
+
+        return requests;
+    }
+
+    private void exportResponseTo(OutputStream out, Queue<String> requests) {
+        DataOutputStream dos = new DataOutputStream(out);
+        String request = requests.poll();
+        RequestParser requestParser = new RequestParser(request);
+        String URI = requestParser.getURI();
+        byte[] body = "Hello World".getBytes();
+        response200Header(dos, body.length);
+        responseBody(dos, body);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
