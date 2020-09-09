@@ -4,7 +4,7 @@
 http://localhost:8080/index.html 로 접속했을 때 webapp 디렉토리의 index.html 파일을 읽어 클라이언트에 응답한다.
 
 ## 기능 목록
-- [ ] request를 읽는다.
+- [x] request를 읽는다.
 - [ ] request에 담긴 정보를 파싱한다.
 - [ ] header를 추출한다.
 - [ ] path를 추출한다.
