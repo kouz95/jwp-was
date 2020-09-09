@@ -6,7 +6,7 @@ http://localhost:8080/index.html 로 접속했을 때 webapp 디렉토리의 ind
 ## 기능 목록
 - [x] request를 읽는다.
 - [x] request에 담긴 정보를 파싱한다.
-- [ ] path에 해당하는 파일을 읽어 응답한다.
+- [x] path에 해당하는 파일을 읽어 응답한다.
 
 ## 진행 방법
 * 웹 애플리케이션 서버 요구사항을 파악한다.
